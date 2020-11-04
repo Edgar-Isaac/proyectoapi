@@ -1,0 +1,7 @@
+# Que es un crud?
+
+CRUD
+CREATE -POst
+READ    -GET
+UPDATE  -PUT
+DELETE  -DELETE
