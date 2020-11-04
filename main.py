@@ -6,6 +6,10 @@ import db_config as db
 
 app = create_app()
 
+@app.route('/test/')
+def test():
+    return jsonify({"message":"Testing"})
+
 @app.route('/api/stands/')
 def show_stands():
     all_stands=dumps(list(db.db.stands_jojo.find()))
