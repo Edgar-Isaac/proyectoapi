@@ -26,59 +26,71 @@ def show_a_stand(tarot_number):
     else: 
         return stand
 
-@app.route('/api/new_stand/',methods=['POST'])
-def add_new_stand():
-    if len(request.json) == 5:
+@app.route('/api/new_stand/<int:token>/',methods=['POST'])
+def add_new_stand(token):
+    if (token==3312):
 
-        db.db.stands_jojo.insert_one({
-            "tarot_number": request.json["tarot_number"],
-            "name":request.json["name"],
-            "user_name":request.json["user_name"],
-            "reference": request.json["reference"],
-            "img": request.json["img"]
+        if len(request.json) == 5:
+
+            db.db.stands_jojo.insert_one({
+                "tarot_number": request.json["tarot_number"],
+                "name":request.json["name"],
+                "user_name":request.json["user_name"],
+                "reference": request.json["reference"],
+                "img": request.json["img"]
         })
-    else:
-        return jsonify({
+        else:
+            return jsonify({
             "ERROR":"ERROR",
             "message":f"{request.json['name']}You're missing something"
         
+            })
 
-    })
-
-    return jsonify({
-        "status":200,
-        "message": "A new Stand was added with success",
-        "lenght":f"{len(request.json)}"
-    })
-
-@app.route('/api/stand/update/<string:tarot_number>/',methods=['PUT'])
-def update_stand(tarot_number):
-    if db.db.stands_jojo.find_one({'tarot_number':tarot_number}):
-        db.db.stands_jojo.update_one({'tarot_number':tarot_number},
-        {'$set':{
-            "tarot_number": request.json["tarot_number"],
-            "name":request.json["name"],
-            "user_name":request.json["user_name"],
-            "reference": request.json["reference"],
-            "img": request.json["img"]    
-        }})
+        return jsonify({
+            "status":200,
+            "message": "A new Stand was added with success",
+            "lenght":f"{len(request.json)}"
+        })
     else:
-        return jsonify ({'status':400, "message": f"Stand #{tarot_number} not found"})
-    return jsonify ({'status':200, "message": f"The stand #{tarot_number} of the list was updated"})
+        return jsonify ({'status':400, "message": f"Access Denied"})
 
-@app.route('/api/stand/del/<string:tarot_number>/',methods=['DELETE'])
-def delete_stand(tarot_number):
-    if db.db.stands_jojo.find_one({'tarot_number':tarot_number}):
-        db.db.stands_jojo.delete_one({'tarot_number':tarot_number})
 
+@app.route('/api/stand/update/<int:token>/<string:tarot_number>/',methods=['PUT'])
+def update_stand(tarot_number,token):
+    if (token==3312):
+
+        if db.db.stands_jojo.find_one({'tarot_number':tarot_number}):
+            db.db.stands_jojo.update_one({'tarot_number':tarot_number},
+            {'$set':{
+                "tarot_number": request.json["tarot_number"],
+                "name":request.json["name"],
+                "user_name":request.json["user_name"],
+                "reference": request.json["reference"],
+                "img": request.json["img"]    
+            }})
+        else:
+            return jsonify ({'status':400, "message": f"Stand #{tarot_number} not found"})
+        return jsonify ({'status':200, "message": f"The stand #{tarot_number} of the list was updated"})
     else:
-        return jsonify ({'status':400, "message": f"Stand #{tarot_number} not found"})
-    return jsonify({"status":200, "message": f"The stand #{tarot_number} was deleted"})
+        return jsonify ({'status':400, "message": f"Access Denied"})
 
-'''Token
-@app.route('/api/token/<string:password>/',methods=['GET'])
+@app.route('/api/stand/del/<int:token>/<string:tarot_number>/',methods=['DELETE'])
+def delete_stand(tarot_number,token):
+    if(token==3312):
+        if db.db.stands_jojo.find_one({'tarot_number':tarot_number}):
+            db.db.stands_jojo.delete_one({'tarot_number':tarot_number})
+
+        else:
+            return jsonify ({'status':400, "message": f"Stand #{tarot_number} not found"})
+        return jsonify({"status":200, "message": f"The stand #{tarot_number} was deleted"})
+    else:
+        return jsonify ({'status':400, "message": f"Access Denied"})
+
+
+'''
+@app.route('/api/token/<int:password>/',methods=['GET'])
 def token(password):
-    if db.db.stands_jojo.find_one({''}):
+    if (password==3312):
          return jsonify({
         "status":200,
         "message": "Access Succesful"})
