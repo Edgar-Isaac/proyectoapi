@@ -4,6 +4,7 @@ from app import create_app
 from bson.json_util import dumps
 import db_config as db
 
+
 app = create_app()
 
 @app.route('/test/')
@@ -12,19 +13,23 @@ def test():
 
 @app.route('/api/stands/')
 def show_stands():
-    all_stands=dumps(list(db.db.stands_jojo.find()))
-    return all_stands
+    all_stands=list(db.db.stands_jojo.find())
+    for stand in all_stands:
+        del stand ["_id"]
+    return jsonify ({"all_stands":all_stands})
 
 @app.route('/api/stand/<string:tarot_number>',methods=['GET'])
 def show_a_stand(tarot_number):
-    stand=dumps(db.db.stands_jojo.find_one({"tarot_number":tarot_number}))
+    stand=db.db.stands_jojo.find_one({"tarot_number":tarot_number})
+    del stand ["_id"]
+
     if  stand == 'null':
         return jsonify({
             "status":400,
             "message":"Stand not found"
         })
     else: 
-        return stand
+        return jsonify({"stand":stand})
 
 @app.route('/api/new_stand/<int:token>/',methods=['POST'])
 def add_new_stand(token):
